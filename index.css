@@ -1,0 +1,140 @@
+:root {
+  --background-color: #1a1a1a;
+  --card-color: #2c2c2c;
+  --gold-color: #ffd700;
+  --text-color: #f0f0f0;
+  --text-muted-color: #a0a0a0;
+  --border-color: #444;
+  --error-color: #e57373;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Vazirmatn', sans-serif;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  margin: 0;
+  padding: 20px;
+  direction: rtl;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+}
+
+#root {
+  width: 100%;
+}
+
+.app-container {
+  width: 100%;
+  max-width: 600px;
+  background-color: var(--card-color);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border-color);
+  margin: 0 auto;
+}
+
+h1 {
+  color: var(--gold-color);
+  text-align: center;
+  margin-top: 0;
+  margin-bottom: 24px;
+  font-size: 2rem;
+}
+
+.calculator-form {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+@media (min-width: 500px) {
+  .calculator-form {
+    grid-template-columns: 1fr 1fr;
+  }
+  
+  .calculator-form .form-group:first-child {
+    grid-column: 1 / -1; /* Make the first item span full width */
+  }
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+}
+
+.form-group input {
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background-color: #333;
+  color: var(--text-color);
+  font-family: inherit;
+  font-size: 1rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: var(--gold-color);
+  box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.3);
+}
+
+.results {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border-color);
+}
+
+.initial-message {
+    padding: 15px;
+    background-color: #383838; /* A slightly lighter background for the message */
+    border: 1px dashed var(--gold-color);
+    border-radius: 8px;
+    text-align: center;
+    color: var(--text-color);
+    margin-bottom: 20px;
+}
+
+.initial-message p {
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+.result-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 0;
+  border-bottom: 1px dashed var(--border-color);
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.result-item:last-child {
+  border-bottom: none;
+}
+
+.result-item.total {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: var(--gold-color);
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--gold-color);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
