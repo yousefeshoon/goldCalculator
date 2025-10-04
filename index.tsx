@@ -80,7 +80,11 @@ const App: React.FC = () => {
             <section className="results">
                 {!isReadyForCalculation && (
                     <div className="initial-message">
+<<<<<<< HEAD
                         <p>لطفاً **قیمت هر گرم طلای ۱۸ عیار** و **وزن طلا** و **اجرت ساخت** را وارد کنید.</p>
+=======
+                        <p>لطفاً **قیمت هر گرم طلای ۱۸ عیار** و **وزن طلا** را وارد کنید.</p>
+>>>>>>> 1c59d4a3ecb952972feacef071d9f4f033ee7803
                     </div>
                 )}
                 {calculatedValues && (
@@ -112,11 +116,14 @@ const App: React.FC = () => {
                     </>
                 )}
             </section>
+<<<<<<< HEAD
             
             <footer className="app-footer">
                 <p>*هزینه استفاده از برنامه*</p>
                 <p>اگر با این برنامه در خریدتون سود کردید، لطفا قسمتی از اون رو صرف خرید مواد پروتئینی برای خانواده های نیازمند کنید</p>
             </footer>
+=======
+>>>>>>> 1c59d4a3ecb952972feacef071d9f4f033ee7803
         </main>
     );
 };
