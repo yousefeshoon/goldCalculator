@@ -138,7 +138,6 @@ h1 {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
-<<<<<<< HEAD
 
 .app-footer {
   margin-top: 24px;
@@ -150,12 +149,16 @@ h1 {
 }
 
 .app-footer p {
-  margin: 0;
+  margin: 0 0 8px 0;
   line-height: 1.6;
 }
 
-.app-footer p:first-child {
-  margin-bottom: 8px;
+.app-footer p:last-child {
+    margin-bottom: 0;
 }
-=======
->>>>>>> 1c59d4a3ecb952972feacef071d9f4f033ee7803
+
+.app-footer .footer-divider {
+    border: none;
+    border-top: 1px dashed var(--border-color);
+    margin: 16px 0;
+}

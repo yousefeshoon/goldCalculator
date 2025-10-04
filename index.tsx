@@ -11,6 +11,14 @@ const formatToman = (value: number): string => {
   return new Intl.NumberFormat('fa-IR').format(Math.round(value)) + ' تومان';
 };
 
+// Helper function to convert Persian/Arabic numerals to English numerals
+const toEnglishDigits = (str: string): string => {
+    if (!str) return '';
+    return str.replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d).toString())
+              .replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d).toString());
+};
+
+
 const App: React.FC = () => {
     const [inputs, setInputs] = useState({
         goldPricePerGram: '',
@@ -22,19 +30,35 @@ const App: React.FC = () => {
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        // Allow only numbers and a single decimal point for flexible input
-        // Note: For goldPricePerGram and weight, decimal is allowed. For percentages, it might be less common, but we keep it flexible.
-        if (/^\d*\.?\d*$/.test(value)) {
-            setInputs(prev => ({ ...prev, [name]: value }));
+        const englishValue = toEnglishDigits(value);
+
+        if (name === 'goldPricePerGram') {
+            const numericValue = englishValue.replace(/[^\d]/g, ''); // Remove non-digit characters
+            if (numericValue === '') {
+                setInputs(prev => ({ ...prev, [name]: '' }));
+                return;
+            }
+            try {
+                const number = BigInt(numericValue);
+                const formattedValue = new Intl.NumberFormat('fa-IR').format(number);
+                setInputs(prev => ({ ...prev, [name]: formattedValue }));
+            } catch (err) {
+                // Ignore potential BigInt errors on invalid input
+            }
+        } else {
+            // Allow only numbers and a single decimal point for other fields
+            if (/^\d*\.?\d*$/.test(englishValue)) {
+                setInputs(prev => ({ ...prev, [name]: value }));
+            }
         }
     };
 
     const calculatedValues = useMemo(() => {
-        const goldPricePerGram = parseFloat(inputs.goldPricePerGram) || 0;
-        const weight = parseFloat(inputs.weight) || 0;
-        const manufFeePercent = parseFloat(inputs.manufFeePercent) || 0;
-        const sellerProfitPercent = parseFloat(inputs.sellerProfitPercent) || 0;
-        const vatPercent = parseFloat(inputs.vatPercent) || 0;
+        const goldPricePerGram = parseFloat(toEnglishDigits(inputs.goldPricePerGram).replace(/[^\d]/g, '')) || 0;
+        const weight = parseFloat(toEnglishDigits(inputs.weight)) || 0;
+        const manufFeePercent = parseFloat(toEnglishDigits(inputs.manufFeePercent)) || 0;
+        const sellerProfitPercent = parseFloat(toEnglishDigits(inputs.sellerProfitPercent)) || 0;
+        const vatPercent = parseFloat(toEnglishDigits(inputs.vatPercent)) || 0;
 
         // Call the external calculation logic
         return calculateGoldPrice({
@@ -47,7 +71,7 @@ const App: React.FC = () => {
     }, [inputs]);
     
     // Check if essential inputs are missing to display a friendly message
-    const isReadyForCalculation = parseFloat(inputs.goldPricePerGram) > 0 && parseFloat(inputs.weight) > 0;
+    const isReadyForCalculation = (parseFloat(toEnglishDigits(inputs.goldPricePerGram).replace(/[^\d]/g, '')) || 0) > 0 && (parseFloat(toEnglishDigits(inputs.weight)) || 0) > 0;
 
 
     return (
@@ -57,7 +81,7 @@ const App: React.FC = () => {
             <section className="calculator-form">
                 <div className="form-group">
                     <label htmlFor="goldPricePerGram">قیمت هر گرم طلای ۱۸ عیار (تومان)</label>
-                    <input type="text" id="goldPricePerGram" name="goldPricePerGram" value={inputs.goldPricePerGram} onChange={handleInputChange} placeholder="مثال: ۳,۳۵۰,۰۰۰" inputMode="decimal" aria-label="قیمت هر گرم طلای ۱۸ عیار به تومان"/>
+                    <input type="text" id="goldPricePerGram" name="goldPricePerGram" value={inputs.goldPricePerGram} onChange={handleInputChange} placeholder="مثال: ۳٬۳۵۰٬۰۰۰" inputMode="numeric" aria-label="قیمت هر گرم طلای ۱۸ عیار به تومان"/>
                 </div>
                 <div className="form-group">
                     <label htmlFor="weight">وزن طلا (گرم)</label>
@@ -114,9 +138,8 @@ const App: React.FC = () => {
             </section>
             
             <footer className="app-footer">
-                <p>---</p>
                 <p>*هزینه استفاده از برنامه*</p>
-                <p>اگر با این برنامه در خریدتون سود کردید، لطفا قسمتی از اون رو صرف خرید مواد پروتئینی برای خانواده های نیازمند کنید</p>
+                <p>اگر با این برنامه در خریدتون سود کردید، لطفا قسمتی از اون رو صرف خرید مواد پروتئینی برای خانواده های نیازمند کنید.</p>
             </footer>
         </main>
     );
