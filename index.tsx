@@ -27,6 +27,8 @@ const App: React.FC = () => {
         sellerProfitPercent: '7',
         vatPercent: '10',
     });
+    const [shareStatus, setShareStatus] = useState<'idle' | 'copied'>('idle');
+
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -73,75 +75,106 @@ const App: React.FC = () => {
     // Check if essential inputs are missing to display a friendly message
     const isReadyForCalculation = (parseFloat(toEnglishDigits(inputs.goldPricePerGram).replace(/[^\d]/g, '')) || 0) > 0 && (parseFloat(toEnglishDigits(inputs.weight)) || 0) > 0;
 
+    const handleShare = async () => {
+        const shareData = {
+            title: 'محاسبه‌گر قیمت طلا',
+            text: 'یک اپلیکیشن ساده و کاربردی برای محاسبه قیمت تمام شده طلا.',
+            url: window.location.href,
+        };
+
+        try {
+            if (navigator.share) {
+                await navigator.share(shareData);
+            } else {
+                await navigator.clipboard.writeText(shareData.url);
+                setShareStatus('copied');
+                setTimeout(() => {
+                    setShareStatus('idle');
+                }, 2000);
+            }
+        } catch (err) {
+            console.error('Error sharing:', err);
+            alert('امکان کپی خودکار لینک وجود ندارد. لطفاً آدرس صفحه را به صورت دستی کپی کنید.');
+        }
+    };
+
 
     return (
-        <main className="app-container">
-            <h1>محاسبه‌گر قیمت طلا</h1>
+        <div className="page-content">
+            <main className="app-container">
+                <h1>محاسبه‌گر قیمت طلا</h1>
 
-            <section className="calculator-form">
-                <div className="form-group">
-                    <label htmlFor="goldPricePerGram">قیمت هر گرم طلای ۱۸ عیار (تومان)</label>
-                    <input type="text" id="goldPricePerGram" name="goldPricePerGram" value={inputs.goldPricePerGram} onChange={handleInputChange} placeholder="مثال: ۳٬۳۵۰٬۰۰۰" inputMode="numeric" aria-label="قیمت هر گرم طلای ۱۸ عیار به تومان"/>
-                </div>
-                <div className="form-group">
-                    <label htmlFor="weight">وزن طلا (گرم)</label>
-                    <input type="text" id="weight" name="weight" value={inputs.weight} onChange={handleInputChange} placeholder="مثال: ۱۲.۳۴۵" inputMode="decimal" aria-label="وزن طلا به گرم"/>
-                </div>
-                <div className="form-group">
-                    <label htmlFor="manufFeePercent">اجرت ساخت (درصد)</label>
-                    <input type="text" id="manufFeePercent" name="manufFeePercent" value={inputs.manufFeePercent} onChange={handleInputChange} placeholder="مثال: ۱۵" inputMode="decimal" aria-label="اجرت ساخت به درصد"/>
-                </div>
-                <div className="form-group">
-                    <label htmlFor="sellerProfitPercent">سود فروشنده (درصد)</label>
-                    <input type="text" id="sellerProfitPercent" name="sellerProfitPercent" value={inputs.sellerProfitPercent} onChange={handleInputChange} inputMode="decimal" aria-label="سود فروشنده به درصد"/>
-                </div>
-                 <div className="form-group">
-                    <label htmlFor="vatPercent">مالیات بر ارزش افزوده (درصد)</label>
-                    <input type="text" id="vatPercent" name="vatPercent" value={inputs.vatPercent} onChange={handleInputChange} inputMode="decimal" aria-label="مالیات بر ارزش افزوده به درصد"/>
-                </div>
-            </section>
-            
-            <section className="results">
-                {!isReadyForCalculation && (
-                    <div className="initial-message">
-                        <p>لطفاً **قیمت هر گرم طلای ۱۸ عیار** و **وزن طلا** و **اجرت ساخت** را وارد کنید.</p>
+                <section className="calculator-form">
+                    <div className="form-group">
+                        <label htmlFor="goldPricePerGram">قیمت هر گرم طلای ۱۸ عیار (تومان)</label>
+                        <input type="text" id="goldPricePerGram" name="goldPricePerGram" value={inputs.goldPricePerGram} onChange={handleInputChange} placeholder="مثال: ۳٬۳۵۰٬۰۰۰" inputMode="numeric" aria-label="قیمت هر گرم طلای ۱۸ عیار به تومان"/>
                     </div>
-                )}
-                {calculatedValues && (
-                    <>
-                        <div className="result-item">
-                            <span>قیمت خام طلا</span>
-                            <span>{formatToman(calculatedValues.rawGoldPrice)}</span>
+                    <div className="form-group">
+                        <label htmlFor="weight">وزن طلا (گرم)</label>
+                        <input type="text" id="weight" name="weight" value={inputs.weight} onChange={handleInputChange} placeholder="مثال: ۱۲.۳۴۵" inputMode="decimal" aria-label="وزن طلا به گرم"/>
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="manufFeePercent">اجرت ساخت (درصد)</label>
+                        <input type="text" id="manufFeePercent" name="manufFeePercent" value={inputs.manufFeePercent} onChange={handleInputChange} placeholder="مثال: ۱۵" inputMode="decimal" aria-label="اجرت ساخت به درصد"/>
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="sellerProfitPercent">سود فروشنده (درصد)</label>
+                        <input type="text" id="sellerProfitPercent" name="sellerProfitPercent" value={inputs.sellerProfitPercent} onChange={handleInputChange} inputMode="decimal" aria-label="سود فروشنده به درصد"/>
+                    </div>
+                     <div className="form-group">
+                        <label htmlFor="vatPercent">مالیات بر ارزش افزوده (درصد)</label>
+                        <input type="text" id="vatPercent" name="vatPercent" value={inputs.vatPercent} onChange={handleInputChange} inputMode="decimal" aria-label="مالیات بر ارزش افزوده به درصد"/>
+                    </div>
+                </section>
+                
+                <section className="results">
+                    {!isReadyForCalculation && (
+                        <div className="initial-message">
+                            <p>لطفاً **قیمت هر گرم طلای ۱۸ عیار** و **وزن طلا** و **اجرت ساخت** را وارد کنید.</p>
                         </div>
-                        <div className="result-item">
-                            <span>اجرت ساخت ({inputs.manufFeePercent || 0}%)</span>
-                            <span>{formatToman(calculatedValues.manufacturingCost)}</span>
-                        </div>
-                        <div className="result-item">
-                            <span>سود فروشنده ({inputs.sellerProfitPercent || 0}%)</span>
-                            <span>{formatToman(calculatedValues.sellerProfit)}</span>
-                        </div>
-                         <div className="result-item">
-                            <span>جمع کل قبل از مالیات</span>
-                            <span>{formatToman(calculatedValues.subtotalBeforeVAT)}</span>
-                        </div>
-                        <div className="result-item">
-                            <span>مالیات بر ارزش افزوده ({inputs.vatPercent || 0}%)</span>
-                            <span>{formatToman(calculatedValues.vatAmount)}</span>
-                        </div>
-                        <div className="result-item total">
-                            <span>قیمت نهایی</span>
-                            <span>{formatToman(calculatedValues.finalPrice)}</span>
-                        </div>
-                    </>
-                )}
-            </section>
+                    )}
+                    {calculatedValues && (
+                        <>
+                            <div className="result-item">
+                                <span>قیمت خام طلا</span>
+                                <span>{formatToman(calculatedValues.rawGoldPrice)}</span>
+                            </div>
+                            <div className="result-item">
+                                <span>اجرت ساخت ({inputs.manufFeePercent || 0}%)</span>
+                                <span>{formatToman(calculatedValues.manufacturingCost)}</span>
+                            </div>
+                            <div className="result-item">
+                                <span>سود فروشنده ({inputs.sellerProfitPercent || 0}%)</span>
+                                <span>{formatToman(calculatedValues.sellerProfit)}</span>
+                            </div>
+                             <div className="result-item">
+                                <span>جمع کل قبل از مالیات</span>
+                                <span>{formatToman(calculatedValues.subtotalBeforeVAT)}</span>
+                            </div>
+                            <div className="result-item">
+                                <span>مالیات بر ارزش افزوده ({inputs.vatPercent || 0}%)</span>
+                                <span>{formatToman(calculatedValues.vatAmount)}</span>
+                            </div>
+                            <div className="result-item total">
+                                <span>قیمت نهایی</span>
+                                <span>{formatToman(calculatedValues.finalPrice)}</span>
+                            </div>
+                        </>
+                    )}
+                </section>
+
+                <footer className="app-footer">
+                    <p>*هزینه استفاده از برنامه*</p>
+                    <p>اگر با این برنامه در خریدتون سود کردید، لطفا قسمتی از اون رو صرف خرید مواد پروتئینی برای خانواده های نیازمند کنید.</p>
+                </footer>
+            </main>
             
-            <footer className="app-footer">
-                <p>*هزینه استفاده از برنامه*</p>
-                <p>اگر با این برنامه در خریدتون سود کردید، لطفا قسمتی از اون رو صرف خرید مواد پروتئینی برای خانواده های نیازمند کنید.</p>
-            </footer>
-        </main>
+            <div className="share-section">
+                <button onClick={handleShare} className="share-button" aria-label="اشتراک‌گذاری برنامه">
+                    {shareStatus === 'idle' ? 'معرفی برنامه به دیگران' : 'لینک کپی شد!'}
+                </button>
+            </div>
+        </div>
     );
 };
 

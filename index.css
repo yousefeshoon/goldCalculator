@@ -29,15 +29,19 @@ body {
   width: 100%;
 }
 
-.app-container {
+.page-content {
   width: 100%;
   max-width: 600px;
+  margin: 0 auto;
+}
+
+.app-container {
+  width: 100%;
   background-color: var(--card-color);
   border-radius: 12px;
   padding: 24px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
   border: 1px solid var(--border-color);
-  margin: 0 auto;
 }
 
 h1 {
@@ -137,6 +141,31 @@ h1 {
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+.share-section {
+    text-align: right;
+    margin-top: 16px;
+}
+
+.share-button {
+    background-color: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-muted-color);
+    padding: 6px 14px;
+    border-radius: 16px;
+    font-family: inherit;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.share-button:hover,
+.share-button:focus {
+    background-color: rgba(255, 215, 0, 0.1);
+    color: var(--gold-color);
+    border-color: var(--gold-color);
+    outline: none;
 }
 
 .app-footer {
